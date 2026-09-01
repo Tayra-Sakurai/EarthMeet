@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "EarthMeet (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "EarthMeet (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
