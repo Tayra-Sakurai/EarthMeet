@@ -1,4 +1,7 @@
-﻿using Microsoft.UI.Xaml;
+// SPDX-FileCopyrightText: 2026 Tayra Sakurai
+// SPDX-License-Identifier: GPL-3.0-or-later
+using Microsoft.UI;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Data;
@@ -27,6 +30,7 @@ namespace EarthMeet
     public partial class App : Application
     {
         private Window? _window;
+        public WindowId? WindowId { get; private set; }
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -45,6 +49,7 @@ namespace EarthMeet
         {
             _window = new MainWindow();
             _window.Activate();
+            WindowId = _window.AppWindow.Id;
         }
     }
 }

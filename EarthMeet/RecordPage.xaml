@@ -9,6 +9,41 @@
     mc:Ignorable="d">
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
+        <TextBlock
+            VerticalAlignment="Top"
+            Style="{StaticResource BodyLargeTextBlockStyle}">
+            録音を行い，録音後に議事録を出力します．
+        </TextBlock>
+
+        <TextBox
+            x:Name="SpecialWords"
+            Header="特殊な用語（固有名詞など）"
+            PlaceholderText="1行に1単語"
+            Grid.Row="1" />
+
+        <CommandBar
+            DefaultLabelPosition="Bottom"
+            Grid.Row="2">
+            <AppBarButton
+                Label="録音"
+                x:Name="RecordBtn">
+                <AppBarButton.Icon>
+                    <FontIcon Glyph="&#xE7C8;" />
+                </AppBarButton.Icon>
+            </AppBarButton>
+            <AppBarButton
+                Label="議事録出力"
+                x:Name="OutputBtn">
+                <AppBarButton.Icon>
+                    <FontIcon Glyph="&#xEDE1;" />
+                </AppBarButton.Icon>
+            </AppBarButton>
+        </CommandBar>
     </Grid>
 </Page>

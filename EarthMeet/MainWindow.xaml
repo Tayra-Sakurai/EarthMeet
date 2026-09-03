@@ -22,11 +22,13 @@
                         <FontIcon Glyph="&#xE7C8;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+                <!--=====================================
                 <NavigationViewItem Content="議事録作成">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE929;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+                ======================================-->
             </NavigationView.MenuItems>
 
             <Frame x:Name="PageFrame" Padding="36" />
