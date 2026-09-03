@@ -25,6 +25,7 @@
             x:Name="SpecialWords"
             Header="特殊な用語（固有名詞など）"
             PlaceholderText="1行に1単語"
+            Text="{x:Bind viewModel.Vocaburary, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
             Grid.Row="1" />
 
         <CommandBar
@@ -32,6 +33,7 @@
             Grid.Row="2">
             <AppBarButton
                 Label="録音"
+                Command="{x:Bind viewModel.RecordCommand}"
                 x:Name="RecordBtn">
                 <AppBarButton.Icon>
                     <FontIcon Glyph="&#xE7C8;" />
@@ -39,6 +41,7 @@
             </AppBarButton>
             <AppBarButton
                 Label="議事録出力"
+                Command="{x:Bind viewModel.GetTextCommand}"
                 x:Name="OutputBtn">
                 <AppBarButton.Icon>
                     <FontIcon Glyph="&#xEDE1;" />

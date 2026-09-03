@@ -4,6 +4,7 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
+  <Project Path="EarthMeet.Bus/EarthMeet.Bus.csproj" Id="53e11633-cdd7-462c-bfe7-fa335a415612" />
   <Project Path="EarthMeet/EarthMeet.csproj">
     <Platform Solution="*|ARM64" Project="ARM64" />
     <Platform Solution="*|x64" Project="x64" />

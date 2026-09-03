@@ -1,5 +1,8 @@
 // SPDX-FileCopyrightText: 2026 Tayra Sakurai
 // SPDX-License-Identifier: GPL-3.0-or-later
+using Google.GenAI;
+using EarthMeet.Bus.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -18,6 +21,8 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using Windows.Media.Capture;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -39,6 +44,7 @@ namespace EarthMeet
         public App()
         {
             InitializeComponent();
+            Ioc.Default.ConfigureServices(GetService());
         }
 
         /// <summary>
@@ -50,6 +56,19 @@ namespace EarthMeet
             _window = new MainWindow();
             _window.Activate();
             WindowId = _window.AppWindow.Id;
+        }
+
+        private static IServiceProvider GetService()
+        {
+            ServiceCollection services = new ServiceCollection();
+
+            services.AddSingleton<Client>();
+            services.AddSingleton(
+                t =>
+                new MediaCapture());
+            services.AddTransient<RecordDataViewModel>();
+
+            return services.BuildServiceProvider();
         }
     }
 }
