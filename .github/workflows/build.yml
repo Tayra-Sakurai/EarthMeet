@@ -36,7 +36,7 @@ jobs:
       - name: Decode the pfx
         run: |
           $pfx_cert_byte = [System.Convert]::FromBase64String("${{ secrets.SECRET_KEY }}")
-          $certificatePath = "GitHubActionsWorkflow.pfx"
+          $certificatePath = "EarthMeet/GitHubActionsWorkflow.pfx"
           [IO.File]::WriteAllBytes("$certificatePath", $pfx_cert_byte)
 
       - name: Restore the Application
