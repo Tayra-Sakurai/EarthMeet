@@ -1,0 +1,55 @@
+name: Build WinUI App
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+    paths:
+      - .github/workflows/build.yml
+      - EarthMeet.slnx
+      - EarthMeet/**
+      - ErathMeet.Bus/**
+
+jobs:
+  build:
+    environment:
+      name: dotnet-build
+      deployment: false
+
+    runs-on: windows-latest
+
+    env:
+      SOLUTION_NAME: EarthMeet.slnx
+
+    steps:
+      - name: Checkout the Repo
+        uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v3
+
+      - name: Decode the pfx
+        run: |
+          $pfx_cert_byte = [System.Convert]::FromBase64String("${{ secrets.SECRET_KEY }}")
+          $certificatePath = "GitHubActionsWorkflow.pfx"
+          [IO.File]::WriteAllBytes("$certificatePath", $pfx_cert_byte)
+
+      - name: Restore the Application
+        run: msbuild $env:SOLUTION_NAME /t:Restore /p:Configuration=Release /p:SelfContained=true /p:TargetFramework=net10.0-windows10.0.26100.0
+
+      - name: Build the App Package
+        run: msbuild $env:SOLUTION_NAME /p:Configuration=Release /p:Platform=x64 /p:UapAppxPackageBuildMode=SideloadOnly /p:AppxBundle=Always /p:PackageCertificateKeyFile=GitHubActionsWorkflow.pfx /p:GenerateAppxPackageOnBuild=true /p:SelfContained=true /p:TargetFramework=net10.0-windows10.0.26100.0 /p:GenerateAppxInstallerFile=true /p:AppPackageDir="AppPackage/"
+
+      - name: Remove the PFX
+        run: Remove-Item -path GitHubActionsWorkflow.pfx
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          path: AppPackage/**
+    
