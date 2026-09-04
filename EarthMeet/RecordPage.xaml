@@ -25,6 +25,7 @@
             x:Name="SpecialWords"
             Header="特殊な用語（固有名詞など）"
             PlaceholderText="1行に1単語"
+            AcceptsReturn="True"
             Text="{x:Bind viewModel.Vocaburary, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
             Grid.Row="1" />
 

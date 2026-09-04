@@ -19,7 +19,11 @@ namespace EarthMeet.Bus.ViewModels
     {
         private readonly RecordData recordData;
         private readonly MediaCapture mediaCapture;
-        private LowLagMediaRecording? mediaRecording;
+
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(RecordCommand))]
+        [NotifyCanExecuteChangedFor(nameof(GetTextCommand))]
+        public partial LowLagMediaRecording? MediaRecording { get; set; }
 
         public string Vocaburary
         {
@@ -33,24 +37,30 @@ namespace EarthMeet.Bus.ViewModels
             this.mediaCapture = mediaCapture;
         }
 
-        [RelayCommand(AllowConcurrentExecutions = false)]
+        [RelayCommand(AllowConcurrentExecutions = false, CanExecute = nameof(CanRecord))]
         private async Task RecordAsync()
         {
             await mediaCapture.InitializeAsync();
             StorageFolder folder = ApplicationData.Current.LocalFolder;
             StorageFile file = await folder.CreateFileAsync("audio.mp3", CreationCollisionOption.GenerateUniqueName);
-            mediaRecording = await mediaCapture.PrepareLowLagRecordToStorageFileAsync(
+            MediaRecording = await mediaCapture.PrepareLowLagRecordToStorageFileAsync(
                 Windows.Media.MediaProperties.MediaEncodingProfile.CreateMp3(Windows.Media.MediaProperties.AudioEncodingQuality.Medium), file);
-            await mediaRecording.StartAsync();
+            await MediaRecording.StartAsync();
             recordData.VoiceDataFile = file;
+        }
+
+        private bool CanRecord()
+        {
+            return MediaRecording is null;
         }
 
         [RelayCommand(AllowConcurrentExecutions = false, CanExecute = nameof(CanGetText))]
         private async Task GetTextAsync()
         {
-            if (mediaRecording == null)
+            if (MediaRecording == null)
                 return;
-            await mediaRecording.StopAsync();
+            await MediaRecording.StopAsync();
+            MediaRecording = null;
             await recordData.TranscribeAsync();
             StorageFile saveFile = await WeakReferenceMessenger.Default.Send<VoiceTranscribedMessage>();
             await FileIO.WriteTextAsync(saveFile, recordData.Transcript);
@@ -58,7 +68,7 @@ namespace EarthMeet.Bus.ViewModels
 
         private bool CanGetText()
         {
-            if (mediaRecording == null) return false;
+            if (MediaRecording == null) return false;
             return true;
         }
     }
