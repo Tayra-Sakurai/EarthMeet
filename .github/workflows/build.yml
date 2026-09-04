@@ -46,7 +46,7 @@ jobs:
         run: msbuild $env:SOLUTION_NAME /p:Configuration=Release /p:Platform=x64 /p:UapAppxPackageBuildMode=SideloadOnly /p:AppxBundle=Always /p:PackageCertificateKeyFile=GitHubActionsWorkflow.pfx /p:GenerateAppxPackageOnBuild=true /p:SelfContained=true /p:TargetFramework=net10.0-windows10.0.26100.0 /p:GenerateAppxInstallerFile=true /p:AppPackageDir="AppPackage/"
 
       - name: Remove the PFX
-        run: Remove-Item -path GitHubActionsWorkflow.pfx
+        run: Remove-Item -path EarthMeet\GitHubActionsWorkflow.pfx
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v7
