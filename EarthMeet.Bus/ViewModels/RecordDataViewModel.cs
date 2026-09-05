@@ -61,10 +61,13 @@ namespace EarthMeet.Bus.ViewModels
         [RelayCommand(AllowConcurrentExecutions = false, CanExecute = nameof(CanGetText))]
         private async Task GetTextAsync()
         {
-            if (MediaRecording == null)
+            if (recordData.VoiceDataFile is null)
                 return;
-            await MediaRecording.StopAsync();
-            MediaRecording = null;
+            if (MediaRecording is not null)
+            {
+                await MediaRecording.StopAsync();
+                MediaRecording = null;
+            }
             await recordData.TranscribeAsync();
             StorageFile saveFile = await WeakReferenceMessenger.Default.Send<VoiceTranscribedMessage>();
             await FileIO.WriteTextAsync(saveFile, recordData.Transcript);
