@@ -33,7 +33,7 @@ namespace EarthMeet.Bus.Models
                 VoiceDataFile.Name);
 
             GenerateContentResponse response = await client.Models.GenerateContentAsync(
-                "gemini-3.5-flash-transcribe",
+                "gemini-3.5-transcribe",
                 [
                     new()
                     {
