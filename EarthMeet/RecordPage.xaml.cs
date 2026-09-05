@@ -61,7 +61,7 @@ namespace EarthMeet
             WeakReferenceMessenger.Default.UnregisterAll(this);
         }
 
-        public async void Receive(VoiceTranscribedMessage message)
+        public void Receive(VoiceTranscribedMessage message)
         {
             WindowId? windowId = (App.Current as App)!.WindowId;
             if (windowId is not WindowId wId)
@@ -77,12 +77,18 @@ namespace EarthMeet
             fileSavePicker.FileTypeChoices.Add(
                 "Markdownファイル",
                 new List<string> { ".md" });
-            PickFileResult result = await fileSavePicker.PickSaveFileAsync();
-            StorageFile storageFile = await StorageFile.GetFileFromPathAsync(result.Path);
-            message.Reply(storageFile);
+            message.Reply(
+                fileSavePicker
+                .PickSaveFileAsync()
+                .AsTask()
+                .ContinueWith(
+                    t =>
+                    {
+                        return StorageFile.GetFileFromPathAsync(t.Result.Path).GetResults();
+                    }));
         }
 
-        public async void Receive(FileUploadRequestedMessage message)
+        public void Receive(FileUploadRequestedMessage message)
         {
             WindowId? wId = (App.Current as App)!.WindowId;
             if (wId is not WindowId windowId)
@@ -100,9 +106,14 @@ namespace EarthMeet
                 {
                     ".mp3",
                 });
-            PickFileResult result = await fileOpenPicker.PickSingleFileAsync();
-            StorageFile storageFile = await StorageFile.GetFileFromPathAsync(result.Path);
-            message.Reply(storageFile);
+            message.Reply(
+                fileOpenPicker.PickSingleFileAsync()
+                .AsTask()
+                .ContinueWith(
+                    (result) =>
+                    {
+                        return StorageFile.GetFileFromPathAsync(result.Result.Path).GetResults();
+                    }));
         }
     }
 }
