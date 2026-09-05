@@ -23,6 +23,7 @@ namespace EarthMeet.Bus.ViewModels
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(RecordCommand))]
         [NotifyCanExecuteChangedFor(nameof(GetTextCommand))]
+        [NotifyCanExecuteChangedFor(nameof(UploadFileCommand))]
         public partial LowLagMediaRecording? MediaRecording { get; set; }
 
         public string Vocaburary
@@ -47,11 +48,14 @@ namespace EarthMeet.Bus.ViewModels
                 Windows.Media.MediaProperties.MediaEncodingProfile.CreateMp3(Windows.Media.MediaProperties.AudioEncodingQuality.Medium), file);
             await MediaRecording.StartAsync();
             recordData.VoiceDataFile = file;
+            RecordCommand.NotifyCanExecuteChanged();
+            GetTextCommand.NotifyCanExecuteChanged();
+            UploadFileCommand.NotifyCanExecuteChanged();
         }
 
         private bool CanRecord()
         {
-            return MediaRecording is null;
+            return (MediaRecording is null) && (recordData.VoiceDataFile is null);
         }
 
         [RelayCommand(AllowConcurrentExecutions = false, CanExecute = nameof(CanGetText))]
@@ -64,11 +68,34 @@ namespace EarthMeet.Bus.ViewModels
             await recordData.TranscribeAsync();
             StorageFile saveFile = await WeakReferenceMessenger.Default.Send<VoiceTranscribedMessage>();
             await FileIO.WriteTextAsync(saveFile, recordData.Transcript);
+            recordData.VoiceDataFile = null;
+            RecordCommand.NotifyCanExecuteChanged();
+            GetTextCommand.NotifyCanExecuteChanged();
+            UploadFileCommand.NotifyCanExecuteChanged();
+        }
+
+        [RelayCommand(AllowConcurrentExecutions = false, CanExecute = nameof(CanUpload))]
+        private async Task UploadFileAsync()
+        {
+            if (MediaRecording != null)
+                return;
+
+            StorageFile voiceFile = await WeakReferenceMessenger.Default.Send<FileUploadRequestedMessage>();
+            recordData.VoiceDataFile = voiceFile;
+            RecordCommand.NotifyCanExecuteChanged();
+            GetTextCommand.NotifyCanExecuteChanged();
+            UploadFileCommand.NotifyCanExecuteChanged();
+        }
+
+        private bool CanUpload()
+        {
+            return MediaRecording is null;
         }
 
         private bool CanGetText()
         {
-            if (MediaRecording == null) return false;
+            if (MediaRecording is null)
+                return recordData.VoiceDataFile != null;
             return true;
         }
     }

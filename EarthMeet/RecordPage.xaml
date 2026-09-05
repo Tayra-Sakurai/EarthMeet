@@ -33,6 +33,10 @@
             DefaultLabelPosition="Bottom"
             Grid.Row="2">
             <AppBarButton
+                Label="アップロード"
+                Icon="Upload"
+                Command="{x:Bind viewModel.UploadFileCommand}"/>
+            <AppBarButton
                 Label="録音"
                 Command="{x:Bind viewModel.RecordCommand}"
                 x:Name="RecordBtn">

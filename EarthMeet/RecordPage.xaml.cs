@@ -31,7 +31,7 @@ namespace EarthMeet
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class RecordPage : Page, IRecipient<VoiceTranscribedMessage>
+    public sealed partial class RecordPage : Page, IRecipient<VoiceTranscribedMessage>, IRecipient<FileUploadRequestedMessage>
     {
         private RecordDataViewModel? viewModel;
 
@@ -45,6 +45,20 @@ namespace EarthMeet
             base.OnNavigatedTo(e);
 
             viewModel = Ioc.Default.GetRequiredService<RecordDataViewModel>();
+            WeakReferenceMessenger.Default.Register<VoiceTranscribedMessage>(this);
+            WeakReferenceMessenger.Default.Register<FileUploadRequestedMessage>(this);
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            base.OnNavigatedFrom(e);
+
+            WeakReferenceMessenger.Default.UnregisterAll(this);
+        }
+
+        ~RecordPage()
+        {
+            WeakReferenceMessenger.Default.UnregisterAll(this);
         }
 
         public async void Receive(VoiceTranscribedMessage message)
@@ -64,6 +78,29 @@ namespace EarthMeet
                 "Markdownファイル",
                 new List<string> { ".md" });
             PickFileResult result = await fileSavePicker.PickSaveFileAsync();
+            StorageFile storageFile = await StorageFile.GetFileFromPathAsync(result.Path);
+            message.Reply(storageFile);
+        }
+
+        public async void Receive(FileUploadRequestedMessage message)
+        {
+            WindowId? wId = (App.Current as App)!.WindowId;
+            if (wId is not WindowId windowId)
+                throw new NullReferenceException("Window id must be specified");
+
+            FileOpenPicker fileOpenPicker = new(windowId)
+            {
+                CommitButtonText = "開く",
+                SuggestedStartLocation = PickerLocationId.VideosLibrary,
+            };
+            fileOpenPicker.FileTypeChoices.Clear();
+            fileOpenPicker.FileTypeChoices.Add(
+                "MP3ファイル",
+                new List<string>
+                {
+                    ".mp3",
+                });
+            PickFileResult result = await fileOpenPicker.PickSingleFileAsync();
             StorageFile storageFile = await StorageFile.GetFileFromPathAsync(result.Path);
             message.Reply(storageFile);
         }
