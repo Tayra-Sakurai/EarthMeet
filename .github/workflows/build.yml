@@ -19,7 +19,7 @@ jobs:
     runs-on: windows-latest
 
     env:
-      SOLUTION_NAME: EarthMeet.slnx
+      SOLUTION_NAME: EarthMeet
 
     steps:
       - name: Checkout the Repo
@@ -36,20 +36,20 @@ jobs:
       - name: Decode the pfx
         run: |
           $pfx_cert_byte = [System.Convert]::FromBase64String("${{ secrets.SECRET_KEY }}")
-          $certificatePath = "EarthMeet/GitHubActionsWorkflow.pfx"
+          $certificatePath = "${{ env.SOLUTION_NAME }}/GitHubActionsWorkflow.pfx"
           [IO.File]::WriteAllBytes("$certificatePath", $pfx_cert_byte)
 
       - name: Restore the Application
         run: msbuild $env:SOLUTION_NAME /t:Restore /p:Configuration=Release /p:SelfContained=true /p:TargetFramework=net10.0-windows10.0.26100.0
 
       - name: Build the App Package
-        run: msbuild $env:SOLUTION_NAME /p:Configuration=Release /p:Platform=x64 /p:UapAppxPackageBuildMode=SideloadOnly /p:AppxBundle=Always /p:PackageCertificateKeyFile=GitHubActionsWorkflow.pfx /p:GenerateAppxPackageOnBuild=true /p:SelfContained=true /p:TargetFramework=net10.0-windows10.0.26100.0 /p:GenerateAppxInstallerFile=true /p:AppPackageDir="AppPackage/"
+        run: msbuild $env:SOLUTION_NAME /p:Configuration=Release /p:Platform=x64 /p:UapAppxPackageBuildMode=SideloadOnly /p:AppxBundle=Always /p:PackageCertificateKeyFile=GitHubActionsWorkflow.pfx /p:GenerateAppxPackageOnBuild=true /p:SelfContained=true /p:TargetFramework=net10.0-windows10.0.26100.0 /p:GenerateAppxInstallerFile=true
 
       - name: Remove the PFX
-        run: Remove-Item -path EarthMeet\GitHubActionsWorkflow.pfx
+        run: Remove-Item -path "${{ env.SOLUTION_NAME }}\GitHubActionsWorkflow.pfx"
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v7
         with:
-          path: EarthMeet/AppPackages/**
+          path: ${{ env.SOLUTION_NAME }}/AppPackages/**
     
