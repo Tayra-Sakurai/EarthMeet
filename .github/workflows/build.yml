@@ -8,7 +8,7 @@ on:
       - .github/workflows/build.yml
       - EarthMeet.slnx
       - EarthMeet/**
-      - ErathMeet.Bus/**
+      - EarthMeet.Bus/**
 
 jobs:
   build:
