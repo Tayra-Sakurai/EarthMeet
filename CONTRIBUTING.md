@@ -21,3 +21,12 @@ Please make a new branch before you make changes on the repository.
 ### Step 3: Make a Pull Request
 
 Please make your pull request with using the template.
+
+## Rules of Modification
+
+Please follow the following rules while you modify this repository.
+
+1. Please write comments **in English**.
+2. Please make the UI written **in Japanese**.
+3. Please attach **comments if necessary**.
+4. Please **contact the Collaborators** when you are in trouble about these rules.
