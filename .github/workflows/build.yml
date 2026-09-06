@@ -52,4 +52,5 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           path: ${{ env.SOLUTION_NAME }}/AppPackages/**
+          name: AppPackages
     

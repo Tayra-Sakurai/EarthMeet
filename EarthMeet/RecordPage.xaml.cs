@@ -63,57 +63,72 @@ namespace EarthMeet
 
         public void Receive(VoiceTranscribedMessage message)
         {
-            WindowId? windowId = (App.Current as App)!.WindowId;
-            if (windowId is not WindowId wId)
-                throw new NullReferenceException("Window ID was null.");
-            FileSavePicker fileSavePicker = new(wId)
-            {
-                Title = "保存先を選択",
-                CommitButtonText = "保存",
-                DefaultFileExtension = ".md",
-                SuggestedFileName = "transcript.md",
-                SuggestedStartLocation = PickerLocationId.DocumentsLibrary,
-            };
-            fileSavePicker.FileTypeChoices.Add(
-                "Markdownファイル",
-                new List<string> { ".md" });
-            message.Reply(
-                fileSavePicker
-                .PickSaveFileAsync()
-                .AsTask()
-                .ContinueWith(
-                    t =>
-                    {
-                        return StorageFile.GetFileFromPathAsync(t.Result.Path).GetResults();
-                    }));
+            message.Reply(GetSaveFileAsync());
         }
 
         public void Receive(FileUploadRequestedMessage message)
         {
+            message.Reply(GetUploadFileAsync());
+        }
+
+        private static async Task<StorageFile> GetUploadFileAsync()
+        {
             WindowId? wId = (App.Current as App)!.WindowId;
             if (wId is not WindowId windowId)
-                throw new NullReferenceException("Window id must be specified");
+                throw new NullReferenceException("The value 'null' is not valid.");
 
             FileOpenPicker fileOpenPicker = new(windowId)
             {
-                CommitButtonText = "開く",
+                CommitButtonText = "選択",
                 SuggestedStartLocation = PickerLocationId.VideosLibrary,
             };
             fileOpenPicker.FileTypeChoices.Clear();
             fileOpenPicker.FileTypeChoices.Add(
-                "MP3ファイル",
-                new List<string>
-                {
-                    ".mp3",
-                });
-            message.Reply(
-                fileOpenPicker.PickSingleFileAsync()
-                .AsTask()
-                .ContinueWith(
-                    (result) =>
-                    {
-                        return StorageFile.GetFileFromPathAsync(result.Result.Path).GetResults();
-                    }));
+                new(
+                    "MP3ファイル",
+                    new List<string> { ".mp3" }));
+            fileOpenPicker.FileTypeChoices.Add(
+                new(
+                    "WAVファイル",
+                    new List<string> { ".wav" }));
+
+            PickFileResult pickFileResult = await fileOpenPicker.PickSingleFileAsync();
+
+            if (string.IsNullOrEmpty(pickFileResult.Path))
+                throw new NullReferenceException("You must pick a file.");
+            else
+            {
+                StorageFile storageFile = await StorageFile.GetFileFromPathAsync(pickFileResult.Path);
+                return storageFile;
+            }
+        }
+
+        private static async Task<StorageFile> GetSaveFileAsync()
+        {
+            WindowId? wId = (App.Current as App)!.WindowId;
+            if (wId is not WindowId windowId)
+                throw new NullReferenceException();
+
+            FileSavePicker fileSavePicker = new(windowId)
+            {
+                CommitButtonText = "保存",
+                DefaultFileExtension = ".md",
+                ShowOverwritePrompt = false,
+                SuggestedFileName = "output.md",
+                SuggestedStartLocation = PickerLocationId.DocumentsLibrary,
+            };
+            fileSavePicker.FileTypeChoices.Clear();
+            fileSavePicker.FileTypeChoices.Add(
+                new(
+                    "Markdownファイル",
+                    new List<string> { ".md" }));
+
+            PickFileResult pickFileResult = await fileSavePicker.PickSaveFileAsync();
+            if (string.IsNullOrEmpty(pickFileResult.Path))
+                throw new NotImplementedException();
+
+            StorageFile storageFile = await StorageFile.GetFileFromPathAsync(pickFileResult.Path);
+            return storageFile;
         }
     }
 }
