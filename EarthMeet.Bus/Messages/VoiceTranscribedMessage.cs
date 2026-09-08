@@ -8,7 +8,7 @@ using Windows.Storage;
 
 namespace EarthMeet.Bus.Messages
 {
-    public class VoiceTranscribedMessage : AsyncRequestMessage<StorageFile>
+    public class VoiceTranscribedMessage : AsyncRequestMessage<string>
     {
         public VoiceTranscribedMessage() : base()
         {

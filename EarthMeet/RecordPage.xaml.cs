@@ -103,7 +103,7 @@ namespace EarthMeet
             }
         }
 
-        private static async Task<StorageFile> GetSaveFileAsync()
+        private static async Task<string> GetSaveFileAsync()
         {
             WindowId? wId = (App.Current as App)!.WindowId;
             if (wId is not WindowId windowId)
@@ -127,8 +127,7 @@ namespace EarthMeet
             if (string.IsNullOrEmpty(pickFileResult.Path))
                 throw new NotImplementedException();
 
-            StorageFile storageFile = await StorageFile.GetFileFromPathAsync(pickFileResult.Path);
-            return storageFile;
+            return pickFileResult.Path;
         }
     }
 }

@@ -69,8 +69,8 @@ namespace EarthMeet.Bus.ViewModels
                 MediaRecording = null;
             }
             await recordData.TranscribeAsync();
-            StorageFile saveFile = await WeakReferenceMessenger.Default.Send<VoiceTranscribedMessage>();
-            await FileIO.WriteTextAsync(saveFile, recordData.Transcript);
+            string saveFile = await WeakReferenceMessenger.Default.Send<VoiceTranscribedMessage>();
+            await System.IO.File.WriteAllTextAsync(saveFile, recordData.Transcript);
             recordData.VoiceDataFile = null;
             RecordCommand.NotifyCanExecuteChanged();
             GetTextCommand.NotifyCanExecuteChanged();
@@ -98,7 +98,7 @@ namespace EarthMeet.Bus.ViewModels
         private bool CanGetText()
         {
             if (MediaRecording is null)
-                return recordData.VoiceDataFile != null;
+                return recordData.VoiceDataFile is not null;
             return true;
         }
     }

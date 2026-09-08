@@ -30,7 +30,11 @@ namespace EarthMeet.Bus.Models
 
             File file = await client.Files.UploadAsync(
                 (await FileIO.ReadBufferAsync(VoiceDataFile)).ToArray(),
-                VoiceDataFile.Name);
+                VoiceDataFile.Name,
+                new()
+                {
+                    MimeType = VoiceDataFile.ContentType,
+                });
 
             GenerateContentResponse response = await client.Models.GenerateContentAsync(
                 "gemini-3.5-transcribe",
@@ -59,7 +63,10 @@ namespace EarthMeet.Bus.Models
                     },
                 });
 
-            Transcript = response.Text;
+            if (string.IsNullOrEmpty(response.Text))
+                Transcript = response.Candidates?[0]?.Content?.Parts?[0]?.AudioTranscription?.Text ?? "テキストを取り出せませんでした．";
+            else
+                Transcript = response.Text;
         }
     }
 }

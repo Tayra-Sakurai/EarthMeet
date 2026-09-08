@@ -33,7 +33,8 @@ namespace EarthMeet
 
         private void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
         {
-            PageFrame.Navigate(typeof(RecordPage));
+            if (PageFrame.SourcePageType is null)
+                PageFrame.Navigate(typeof(RecordPage));
         }
     }
 }
