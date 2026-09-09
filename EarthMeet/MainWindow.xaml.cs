@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
+using Microsoft.Windows.Storage;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -29,12 +30,29 @@ namespace EarthMeet
         {
             InitializeComponent();
             Activated += MainWindow_Activated;
+            MainNav.ItemInvoked += MainNav_ItemInvoked;
+        }
+
+        private void MainNav_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
+        {
+            if (args.InvokedItem == Rec.Content)
+                PageFrame.Navigate(typeof(RecordPage));
+            else if (args.IsSettingsInvoked)
+                PageFrame.Navigate(typeof(SettingsPage));
         }
 
         private void MainWindow_Activated(object sender, WindowActivatedEventArgs args)
         {
             if (PageFrame.SourcePageType is null)
-                PageFrame.Navigate(typeof(RecordPage));
+            {
+                if (!string.IsNullOrWhiteSpace(ApplicationData.GetDefault().LocalSettings.Values["API_KEY"] as string))
+                    PageFrame.Navigate(typeof(RecordPage));
+                else
+                {
+                    PageFrame.Navigate(typeof(SettingsPage));
+                    Rec.IsEnabled = false;
+                }
+            }
         }
     }
 }

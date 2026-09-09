@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="EarthMeet.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:EarthMeet"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
+    xmlns:ui="using:CommunityToolkit.WinUI"
+    mc:Ignorable="d">
+
+    <Grid>
+        <ScrollViewer>
+            <StackPanel Spacing="4">
+                <controls:SettingsCard
+                    Header="APIキー"
+                    Description="Gemini APIを使用するために必要です．"
+                    HeaderIcon="{ui:FontIcon Glyph=&#xE8D7;}">
+                    <TextBox x:Name="APIKey"/>
+                </controls:SettingsCard>
+                <controls:SettingsCard
+                    Header="設定を適用する"
+                    Description="設定を変更するにはボタンを押してください．">
+                    <Button
+                        Content="適用"
+                        x:Name="RestartButton"/>
+                </controls:SettingsCard>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

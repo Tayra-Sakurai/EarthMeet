@@ -15,9 +15,12 @@
 
     <Grid>
         <NavigationView
-            IsSettingsVisible="False">
+            x:Name="MainNav"
+            IsSettingsVisible="True">
             <NavigationView.MenuItems>
-                <NavigationViewItem Content="録音">
+                <NavigationViewItem
+                    Content="録音"
+                    x:Name="Rec">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE7C8;" />
                     </NavigationViewItem.Icon>

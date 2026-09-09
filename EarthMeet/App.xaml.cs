@@ -23,6 +23,7 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Windows.Media.Capture;
+using Microsoft.Windows.Storage;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -44,7 +45,6 @@ namespace EarthMeet
         public App()
         {
             InitializeComponent();
-            Ioc.Default.ConfigureServices(GetService());
         }
 
         /// <summary>
@@ -54,15 +54,19 @@ namespace EarthMeet
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
             _window = new MainWindow();
+            if (ApplicationData.GetDefault().LocalSettings.Values["API_KEY"] is string apiKey)
+                Ioc.Default.ConfigureServices(GetService(apiKey));
             _window.Activate();
             WindowId = _window.AppWindow.Id;
         }
 
-        private static IServiceProvider GetService()
+        private static IServiceProvider GetService(string apiKey)
         {
             ServiceCollection services = new ServiceCollection();
 
-            services.AddSingleton<Client>();
+            services.AddSingleton(
+                t =>
+                new Client(apiKey: apiKey));
             services.AddSingleton(
                 t =>
                 new MediaCapture());
