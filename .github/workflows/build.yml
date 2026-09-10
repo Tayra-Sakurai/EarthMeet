@@ -10,6 +10,9 @@ on:
       - EarthMeet/**
       - EarthMeet.Bus/**
 
+permissions:
+  contents: read
+
 jobs:
   build:
     environment:
