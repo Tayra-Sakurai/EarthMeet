@@ -8,7 +8,8 @@ Security updates are supported on the following major version.
 
 |Version|Status|
 |:------|:----:|
-|1.0    |  ✓  |
+|1.0    |  ✗  |
+|1.1    |  ✓  |
 
 ## Vulnerability Reporting
 
