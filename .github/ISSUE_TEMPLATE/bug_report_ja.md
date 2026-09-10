@@ -1,6 +1,6 @@
 ---
 name: バグ報告
-description: 不具合に関する情報を報告する．
+about: 不具合に関する情報を報告する．
 title: "[BUG] "
 labels: bug
 assignees: Tayra-Sakurai
