@@ -13,4 +13,4 @@ Security updates are supported on the following major version.
 
 ## Vulnerability Reporting
 
-Please report the collabolator via private reporting system of GitHub or email to <b4151069@edu.kit.ac.jp>.
+Please report the collaborators via private reporting system of GitHub or email to <b4151069@edu.kit.ac.jp>.
